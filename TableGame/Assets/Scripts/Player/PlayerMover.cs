@@ -21,7 +21,7 @@ public class PlayerMover : MonoBehaviour
     private int _count;
     private bool _isMove = false;
 
-    public event UnityAction EndMoved;
+    public event UnityAction<int> EndMoved;
 
     public void InitMoving(int deltaIndex, Transform[] points)
     {
@@ -71,7 +71,7 @@ public class PlayerMover : MonoBehaviour
                 {
                     _currentSpeed = 0;
                     _currentIndex = _index;
-                    EndMoved?.Invoke();
+                    EndMoved?.Invoke(_currentIndex);
                 }
 
                 if (_index >= _count - 1)

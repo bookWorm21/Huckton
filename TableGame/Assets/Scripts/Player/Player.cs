@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
 
     private Transform[] _points;
 
+    public int Points { get; private set; }
+
     public string Name
     {
         get
@@ -22,7 +24,7 @@ public class Player : MonoBehaviour
         }
     }
             
-    public event UnityAction EndMoved;
+    public event UnityAction<int> EndMoved;
 
     public void InitPlayer(Transform[] points)
     {
@@ -44,8 +46,8 @@ public class Player : MonoBehaviour
         _mover.EndMoved -= OnMoveEnd;
     }
 
-    private void OnMoveEnd()
+    private void OnMoveEnd(int index)
     {
-        EndMoved?.Invoke();
+        EndMoved?.Invoke(index);
     }
 }

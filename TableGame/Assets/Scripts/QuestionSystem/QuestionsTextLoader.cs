@@ -12,7 +12,6 @@ public class QuestionsTextLoader
     {
         if(level >= 0 && level <= (_questions.Count - 1))
         {
-            Debug.Log("block in true");
             return _questions[level];
         }
 
@@ -22,7 +21,7 @@ public class QuestionsTextLoader
     public void LoadTextFile(string fileName)
     {
         var questionText = Resources.Load<TextAsset>(fileName).ToString();
-
+        
         _templateStringArrray = questionText.Split(';');
         StringHundler(_templateStringArrray);
     }
