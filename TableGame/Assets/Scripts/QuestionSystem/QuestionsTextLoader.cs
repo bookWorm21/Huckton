@@ -31,22 +31,36 @@ public class QuestionsTextLoader
         List<int> answers = new List<int>();
         List<string> questions = new List<string>();
         string current = "";
+        int answer = 0;
 
         for (int i = 0; i < start.Length; i++)
         {
             for (int j = 0; j < start[i].Length; j++)
             {
-                if ((j == start[i].Length - 3) == false)
+                if ((j == (start[i].Length - 3)) == false)
                 {
                     current += start[i][j];
                 }
                 else
                 {
-                    answers.Add(System.Convert.ToInt32(start[i][j]));
+                    //answer = System.Convert.ToInt32(start[i][j] + "");
+
+                    try
+                    {
+                        answer = int.Parse(start[i][j] + "");
+                    }
+                    catch
+                    {
+                        answer = 0;
+                    }
                 }
             }
-            questions.Add(current);
 
+            questions.Add(current);
+            Debug.Log(answer);
+            answers.Add(answer);
+
+            answer = 0;
             current = "";
         }
 

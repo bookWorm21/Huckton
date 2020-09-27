@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,6 +8,9 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private PlayerMover _mover;
     [SerializeField] private string _name;
+
+    [SerializeField] private TMP_Text _pointLabel;
+    [SerializeField] private TMP_Text _nameLabel;
 
     private Transform[] _points;
 
@@ -26,6 +30,11 @@ public class Player : MonoBehaviour
             
     public event UnityAction<int> EndMoved;
 
+    private void Start()
+    {
+        _nameLabel.text = _name;
+    }
+
     public void InitPlayer(Transform[] points)
     {
         _points = points;
@@ -34,6 +43,12 @@ public class Player : MonoBehaviour
     public void StartMove(int deltaIndex)
     {
         _mover.InitMoving(deltaIndex, _points);
+    }
+
+    public void AddPoint(int points)
+    {
+        Points += points;
+        _pointLabel.text = Points.ToString();
     }
 
     private void OnEnable()

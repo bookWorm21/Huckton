@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private float _distanceBeforeTarget;
     [SerializeField] private BlockContainer _container;
+
+    private Animator _animator;
 
     private Transform[] _points;
     private int _neededIndex;
@@ -23,12 +26,17 @@ public class PlayerMover : MonoBehaviour
 
     public event UnityAction<int> EndMoved;
 
+    private void Start()
+    {
+        _animator = GetComponent<Animator>();
+    }
+
     public void InitMoving(int deltaIndex, Transform[] points)
     {
         _isMove = true;
         _points = points;
         _count = _points.Length;
-        _neededIndex = _currentIndex + deltaIndex + 1;
+        _neededIndex = _currentIndex + deltaIndex;
         _currentSpeed = _speed;
 
         if(_neededIndex > _count - 1)
@@ -54,6 +62,7 @@ public class PlayerMover : MonoBehaviour
         _current.y = transform.position.y;
         _index = _currentIndex;
 
+        _animator.SetBool("isMove", true);
         Rotate();
     }
 
@@ -69,9 +78,14 @@ public class PlayerMover : MonoBehaviour
 
                 if (_index == _neededIndex)
                 {
+                    _animator.SetBool("isMove", false);
                     _currentSpeed = 0;
                     _currentIndex = _index;
                     EndMoved?.Invoke(_currentIndex);
+                }
+                else
+                {
+                    _animator.SetBool("isMove", true);
                 }
 
                 if (_index >= _count - 1)
@@ -87,6 +101,9 @@ public class PlayerMover : MonoBehaviour
                 _current.y = transform.position.y;
 
                 Rotate();
+            }
+            else
+            { 
             }
         }
     }

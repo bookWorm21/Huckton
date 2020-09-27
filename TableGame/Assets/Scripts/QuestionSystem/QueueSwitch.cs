@@ -5,11 +5,17 @@ using UnityEngine;
 
 public class QueueSwitch : MonoBehaviour
 {
+    [SerializeField] private EndGameHundler _endGameHundler;
+
     [SerializeField] private BlockContainer _container;
     [SerializeField] private Player[] _players;
     [SerializeField] TMP_Text _playerName;
     [SerializeField] TMP_Text _diceValue;
     [SerializeField] QuestionInit _questionInit;
+
+    [SerializeField] private int _pointsForWin;
+
+    [SerializeField] private AudioSource _roliAudio;
 
     private Transform[] _points;
     private Block[] _blocks;
@@ -35,21 +41,29 @@ public class QueueSwitch : MonoBehaviour
         foreach(var player in _players)
         {
             player.InitPlayer(_points);
-        }    
+        }
+
+        _playerName.text = _currentPlayer.Name;
     }
 
     public void RollDice()
     {
         if(_isMove == false)
         {
-            int a = Random.Range(1, 6);
-            int b = Random.Range(1, 6);
-            _diceValue.text = (a + b).ToString();
-            _playerName.text = _currentPlayer.Name;
-
-            _isMove = true;
-            _currentPlayer.StartMove(a + b);
+            _roliAudio.Play();
+            StartCoroutine(SetRoleValueInLabel());
         }
+    }
+
+    private IEnumerator SetRoleValueInLabel()
+    {
+        yield return new WaitForSeconds(1.7f);
+
+        int a = Random.Range(1, 7);
+        int b = Random.Range(1, 7);
+        _diceValue.text = (a + b).ToString();
+        _isMove = true;
+        _currentPlayer.StartMove(a + b);
     }
 
     private void OnEnable()
@@ -77,22 +91,40 @@ public class QueueSwitch : MonoBehaviour
             complexity = _blocks[index].Complexity;
         }
 
-        _questionInit.ShowText(complexity);
+        if (complexity == 1)
+        {
+            _questionInit.ShowText(complexity);
+        }
+        else if(complexity == 2)
+        {
+            _questionInit.ShowText();
+        }    
     }
 
     public void NextPlayerInQueue(int points)
     {
         _isMove = false;
-
-        if (_currentIndex >= _players.Length - 1)
+        _currentPlayer.AddPoint(points);
+        if (_currentPlayer.Points >= _pointsForWin)
         {
-            _currentIndex = 0;
+            _isMove = true;
+            _endGameHundler.GameEnd(_currentPlayer.Name);
         }
         else
         {
-            _currentIndex++;
-        }
+            Debug.Log(points);
 
-        _currentPlayer = _players[_currentIndex];
+            if (_currentIndex >= _players.Length - 1)
+            {
+                _currentIndex = 0;
+            }
+            else
+            {
+                _currentIndex++;
+            }
+
+            _currentPlayer = _players[_currentIndex];
+            _playerName.text = _currentPlayer.Name;
+        }
     }
 }
